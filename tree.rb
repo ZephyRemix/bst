@@ -27,7 +27,27 @@ class Tree
     res = nil
 
     while curr_node != nil
-      # binding.pry
+      case res = curr_node.compare(curr_node.value, value)
+      when 1
+        prev_node = curr_node
+        curr_node = curr_node.right_child
+      when -1
+        prev_node = curr_node
+        curr_node = curr_node.left_child
+      when 0; return
+      end
+    end
+    # insert new leaf node
+    curr_node = Node.new(value)
+    res == 1 ? prev_node.set_right(curr_node) : prev_node.set_left(curr_node)
+  end
+
+  def delete(value)
+    prev_node = nil
+    curr_node = self.root
+
+    # loop through tree, and find node.value that matches value
+    while curr_node != nil
       case res = curr_node.compare(curr_node.value, value)
       when 1
         prev_node = curr_node
@@ -38,14 +58,31 @@ class Tree
       when 0; break
       end
     end
-    # at the end of the tree where self.root == nil
-    curr_node = Node.new(value)
-    # binding.pry
-    case res
-    when 1
-      prev_node.set_right(curr_node)
-    when -1 
-      prev_node.set_left(curr_node)
+
+    case curr_node.get_child
+    # scenario 1: delete leaf node (case: node's left & right_child == nil) => node's parent.left/right_child = nil
+    when [0,0]
+      prev_node.left_child.value == curr_node.value ? prev_node.set_left(nil) : prev_node.set_right(nil)
+
+    # scenario 2: delete node with 1 child => link node's parent directly to node's child 
+    when [1,0]
+      prev_node.left_child.value == curr_node.value ? prev_node.set_left(curr_node.left_child) : prev_node.set_right(curr_node.left_child)
+    when [0,1]
+      prev_node.left_child.value == curr_node.value ? prev_node.set_left(curr_node.right_child) : prev_node.set_right(curr_node.right_child)
+
+    # scenario 3: delete node with 2 children => 
+    when [1,1]
+      # find next larger node, and the node preceeding it
+      replacement_node, prev_node = self.get_next_larger_node(curr_node)
+      curr_node.value = replacement_node.value
+      case replacement_node.get_child
+      # replacement node has no child nodes
+      when [0,0]
+        prev_node.set_right(nil)
+      # replacement node has 1 right child node
+      when [0,1]
+        prev_node.set_left(replacement_node.right_child)
+      end
     end
   end
 
@@ -54,6 +91,21 @@ class Tree
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
     pretty_print(node.left_child, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left_child
   end
+
+  private
+
+  def get_next_larger_node(target_node)
+    # start from right sub-tree of target_node
+    prev_node = target_node
+    curr_node = target_node.right_child
+
+    while curr_node.left_child != nil
+      prev_node = curr_node
+      curr_node = curr_node.left_child
+    end
+
+    return curr_node, prev_node
+  end
 end
 
 tree = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
@@ -61,4 +113,12 @@ tree.build_tree
 tree.pretty_print
 tree.insert(6)
 tree.insert(50)
+tree.pretty_print
+tree.delete(6)
+tree.pretty_print
+tree.delete(5)
+tree.pretty_print
+tree.delete(9)
+tree.pretty_print
+tree.delete(4)
 tree.pretty_print
