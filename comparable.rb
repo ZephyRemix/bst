@@ -1,5 +1,9 @@
 module Comparable
-  def self.compare(other_value)
-    self.value > other_value ? 1 : 0 
+  def compare(curr_val, new_val)
+    case true
+    when new_val == curr_val; return 0
+    when new_val > curr_val; return 1
+    when new_val < curr_val; return -1
+    end
   end
 end
