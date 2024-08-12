@@ -99,13 +99,12 @@ class Tree
   end
 
   def level_order
-    if !block_given?
-      # return an array of values using BFS
-      arr = []
-      
-      return arr
-    end 
-    # if block_given; yield each node using BFS
+    q = self.bfs
+
+    return q if !block_given?
+ 
+    q.each do |node|
+      yield node if !(node.value).nil?
     end
   end
 
@@ -130,42 +129,21 @@ class Tree
     return curr_node, prev_node
   end
 
-  # def traverse_tree(value)
-  #   prev = nil
-  #   curr = self.root
-  #   res = nil
+  def bfs
 
-  #   if !block_given?
-  #     while curr != nil
-  #       case res = curr.compare(curr.value, value)
-  #       when 1 
-  #         prev = curr
-  #         curr = curr.right_child
-  #       when -1 
-  #         prev = curr
-  #         curr = curr.left_child
-  #       when 0 
-  #         return prev, curr
-  #       end
-  #     end
-  #     return prev, curr, res
+    q = Array.new()
+    q << self.root
+    i = 0
 
-  #   elsif block_given?
-  #     while curr != nil
-  #       yield curr
-  #       case res = curr.compare(curr.value, value)
-  #       when 1 
-  #         prev = curr
-  #         curr = curr.right_child
-  #       when -1 
-  #         prev = curr
-  #         curr = curr.left_child
-  #       when 0 
-  #         return curr
-  #       end
-  #     end
-  #   end
-  # end
+    while !q[i].nil?
+      curr_node = q[i]
+      q << q[i].left_child if !q[i].left_child.nil?
+      q << q[i].right_child if !q[i].right_child.nil?
+      
+      i += 1
+    end
+    return q
+  end
 end
 
 tree = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
@@ -183,3 +161,4 @@ tree.pretty_print
 tree.delete(4)
 tree.pretty_print
 puts tree.find(324)
+tree.level_order {|node| puts node.value}
