@@ -37,8 +37,9 @@ class Tree
       when 0; return
       end
     end
+
     # insert new leaf node
-    curr_node = Node.new(value)
+    curr_node = Node.new(value) if curr_node.nil?
     res == 1 ? prev_node.set_right(curr_node) : prev_node.set_left(curr_node)
   end
 
@@ -60,29 +61,51 @@ class Tree
     end
 
     case curr_node.get_child
-    # scenario 1: delete leaf node (case: node's left & right_child == nil) => node's parent.left/right_child = nil
+    # scenario 1: delete leaf node
     when [0,0]
       prev_node.left_child.value == curr_node.value ? prev_node.set_left(nil) : prev_node.set_right(nil)
 
-    # scenario 2: delete node with 1 child => link node's parent directly to node's child 
+    # scenario 2: delete node with 1 child
     when [1,0]
       prev_node.left_child.value == curr_node.value ? prev_node.set_left(curr_node.left_child) : prev_node.set_right(curr_node.left_child)
     when [0,1]
       prev_node.left_child.value == curr_node.value ? prev_node.set_left(curr_node.right_child) : prev_node.set_right(curr_node.right_child)
 
-    # scenario 3: delete node with 2 children => 
+    # scenario 3: delete node with 2 children
     when [1,1]
-      # find next larger node, and the node preceeding it
       replacement_node, prev_node = self.get_next_larger_node(curr_node)
       curr_node.value = replacement_node.value
       case replacement_node.get_child
-      # replacement node has no child nodes
+      # scenario 3.1: replacement node has no child nodes
       when [0,0]
         prev_node.set_right(nil)
-      # replacement node has 1 right child node
+      # scenario 3.2: replacement node has 1 right child node
       when [0,1]
         prev_node.set_left(replacement_node.right_child)
       end
+    end
+  end
+
+  def find(value)
+    curr_node = self.root
+
+    while curr_node != nil
+      case res = curr_node.compare(curr_node.value, value)
+      when 1; curr_node = curr_node.right_child
+      when -1; curr_node = curr_node.left_child
+      when 0; return curr_node
+      end
+    end
+  end
+
+  def level_order
+    if !block_given?
+      # return an array of values using BFS
+      arr = []
+      
+      return arr
+    end 
+    # if block_given; yield each node using BFS
     end
   end
 
@@ -106,6 +129,43 @@ class Tree
 
     return curr_node, prev_node
   end
+
+  # def traverse_tree(value)
+  #   prev = nil
+  #   curr = self.root
+  #   res = nil
+
+  #   if !block_given?
+  #     while curr != nil
+  #       case res = curr.compare(curr.value, value)
+  #       when 1 
+  #         prev = curr
+  #         curr = curr.right_child
+  #       when -1 
+  #         prev = curr
+  #         curr = curr.left_child
+  #       when 0 
+  #         return prev, curr
+  #       end
+  #     end
+  #     return prev, curr, res
+
+  #   elsif block_given?
+  #     while curr != nil
+  #       yield curr
+  #       case res = curr.compare(curr.value, value)
+  #       when 1 
+  #         prev = curr
+  #         curr = curr.right_child
+  #       when -1 
+  #         prev = curr
+  #         curr = curr.left_child
+  #       when 0 
+  #         return curr
+  #       end
+  #     end
+  #   end
+  # end
 end
 
 tree = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
@@ -122,3 +182,4 @@ tree.delete(9)
 tree.pretty_print
 tree.delete(4)
 tree.pretty_print
+puts tree.find(324)
