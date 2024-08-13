@@ -1,2 +1,3 @@
-tree.delete(9)
-tree.pretty_print
+q.each do |node|
+#   puts node.value
+# end

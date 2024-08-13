@@ -104,7 +104,26 @@ class Tree
     return q if !block_given?
  
     q.each do |node|
-      yield node if !(node.value).nil?
+      yield node if !node.value.nil?
+    end
+  end
+
+  def preorder(node = self.root, q = [])
+    # binding.pry
+    if !block_given?
+      return q if node.nil?
+
+      q << node
+      q = preorder(node.left_child, q)
+      q = preorder(node.right_child, q)
+      return q
+    elsif block_given?
+      
+      return if node.nil?
+
+      yield node.value
+      preorder(node.left_child, q) {}
+      preorder(node.right_child, q) {}
     end
   end
 
@@ -149,16 +168,23 @@ end
 tree = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 tree.build_tree
 tree.pretty_print
-tree.insert(6)
-tree.insert(50)
-tree.pretty_print
-tree.delete(6)
-tree.pretty_print
-tree.delete(5)
-tree.pretty_print
-tree.delete(9)
-tree.pretty_print
-tree.delete(4)
-tree.pretty_print
-puts tree.find(324)
-tree.level_order {|node| puts node.value}
+# tree.insert(6)
+# tree.insert(50)
+# # tree.pretty_print
+# tree.delete(6)
+# # tree.pretty_print
+# tree.delete(5)
+# # tree.pretty_print
+# tree.delete(9)
+# # tree.pretty_print
+# tree.delete(4)
+# tree.pretty_print
+# puts tree.find(324)
+# tree.level_order {|node| puts node.value}
+
+# print_proc = Proc.new {|node| puts node.value}
+# tree.preorder
+tree.preorder {|node| p node}
+# q.each do |node|
+#   puts node.value
+# end
