@@ -9,7 +9,7 @@ class Tree
     self.root = nil
   end
 
-  def build_tree(start = 0, last = self.array.size)
+  def build_tree(start = 0, last = self.array.size-1)
     return nil if start > last
 
     mid = (start + last) / 2
@@ -134,7 +134,7 @@ class Tree
 
     postorder(node.left_child, q, &blk)
     postorder(node.right_child, q, &blk)
-    
+
     block_given? ? blk.call(node) : q << node
     return q
   end
