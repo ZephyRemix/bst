@@ -108,23 +108,34 @@ class Tree
     end
   end
 
-  def preorder(node = self.root, q = [])
+  # def preorder(node = self.root, q = [], &blk)
+  #   # binding.pry
+  #   if !block_given?
+  #     return q if node.nil?
+
+  #     q << node
+  #     q = preorder(node.left_child, q)
+  #     q = preorder(node.right_child, q)
+  #     return q
+
+  #   elsif block_given?
+  #     return if node.nil?
+
+  #     blk.call(node.value) 
+  #     preorder(node.left_child, blk) {|node| p node}
+  #     preorder(node.right_child, blk) {|node| p node}
+  #   end
+  # end
+
+  def preorder(node = self.root, q = [], &blk)
     # binding.pry
-    if !block_given?
-      return q if node.nil?
+    return q if node.nil?
 
-      q << node
-      q = preorder(node.left_child, q)
-      q = preorder(node.right_child, q)
-      return q
-    elsif block_given?
-      
-      return if node.nil?
+    block_given? ? blk.call(node) : q << node
 
-      yield node.value
-      preorder(node.left_child, q) {}
-      preorder(node.right_child, q) {}
-    end
+    preorder(node.left_child, q, &blk)
+    preorder(node.right_child, q, &blk)
+    return q
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -182,9 +193,7 @@ tree.pretty_print
 # puts tree.find(324)
 # tree.level_order {|node| puts node.value}
 
-# print_proc = Proc.new {|node| puts node.value}
-# tree.preorder
-tree.preorder {|node| p node}
-# q.each do |node|
-#   puts node.value
-# end
+q = tree.preorder
+q.each do |node|
+  puts node.value
+end

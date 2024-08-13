@@ -1,3 +1,3 @@
 q.each do |node|
-#   puts node.value
-# end
+  puts node.value
+end
