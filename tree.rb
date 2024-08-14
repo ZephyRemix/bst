@@ -139,6 +139,17 @@ class Tree
     return q
   end
 
+  def height(val)
+    curr = self.root
+    h = 0
+
+    while curr.value != val
+      curr.compare(curr.value, val) == 1 ? curr = curr.right_child : curr = curr.left_child
+      h += 1
+    end
+    return h
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right_child, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right_child
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
@@ -194,4 +205,5 @@ tree.pretty_print
 # puts tree.find(324)
 # tree.level_order {|node| puts node.value}
 
-tree.postorder {|node| puts node.value}
+# tree.inorder {|node| puts node.value}
+puts "Tree height: #{tree.height(6345)}"
