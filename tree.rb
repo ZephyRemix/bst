@@ -40,7 +40,7 @@ class Tree
     end
 
     # insert new leaf node
-    curr_node = Node.new(value) if curr_node.nil?
+    curr_node = Node.new(value, prev_node.depth + 1) if curr_node.nil?
     res == 1 ? prev_node.set_right(curr_node) : prev_node.set_left(curr_node)
   end
 
@@ -161,13 +161,19 @@ class Tree
   end
 
   def balanced?
+    # binding.pry
     self.preorder do |node|
       node.left_child != nil ? l_h = self.height(node.left_child) : l_h = 0
       node.right_child != nil ? r_h = self.height(node.right_child) : r_h = 0
-      return false if l_h - r_h > 1
+      return false if l_h - r_h > 1 || l_h - r_h < -1
     end
 
     return true
+  end
+
+  def rebalance
+    self.array = self.inorder.map {|node| node.value}
+    self.build_tree
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -208,24 +214,27 @@ class Tree
   end
 end
 
-tree = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
-tree.build_tree
-tree.pretty_print
-# tree.insert(6)
-# tree.insert(50)
-# # tree.pretty_print
-# tree.delete(6)
-# # tree.pretty_print
-# tree.delete(5)
-# # tree.pretty_print
-# tree.delete(9)
-# # tree.pretty_print
-# tree.delete(4)
+# tree = Tree.new((Array.new(15) { rand(1..100) }))
+# tree.build_tree
 # tree.pretty_print
-# puts tree.find(324)
-# tree.level_order {|node| puts node.value}
+# puts "Original tree is balanced: #{tree.balanced?}"
 
+# tree.level_order {|node| puts node.value}
 # tree.inorder {|node| puts node.value}
-# puts "Tree depth: #{tree.depth(9)}"
-# puts "Tree height: #{tree.height(9)}"
-puts tree.balanced?
+# tree.preorder {|node| puts node.value}
+# tree.postorder {|node| puts node.value}
+
+# tree.insert(101)
+# tree.insert(1010)
+# tree.insert(200)
+# tree.insert(2000)
+# tree.pretty_print
+# puts "After insertion, tree is balanced: #{tree.balanced?}"
+
+# tree.rebalance
+# puts "Rebalanced tree is balanced: #{tree.balanced?}"
+# tree.pretty_print
+# tree.level_order {|node| puts node.value}
+# tree.inorder {|node| puts node.value}
+# tree.preorder {|node| puts node.value}
+# tree.postorder {|node| puts node.value}

@@ -25,8 +25,4 @@ class Node
     self.right_child.nil? ? child_flag[1] = 0 : child_flag[1] = 1 
     child_flag
   end
-
-  # def num_children
-  #   [self.left_child, self.right_child].count(&:itself)
-  # end
 end 
