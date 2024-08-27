@@ -1,4 +1,4 @@
-require_relative 'comparable'
+require_relative "comparable"
 
 class Node
   include Comparable
@@ -21,8 +21,8 @@ class Node
 
   def get_child
     child_flag = []
-    self.left_child.nil? ? child_flag[0] = 0 : child_flag[0] = 1
-    self.right_child.nil? ? child_flag[1] = 0 : child_flag[1] = 1 
+    child_flag[0] = left_child.nil? ? 0 : 1
+    child_flag[1] = right_child.nil? ? 0 : 1
     child_flag
   end
-end 
+end
