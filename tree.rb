@@ -9,14 +9,15 @@ class Tree
     self.root = nil
   end
 
-  def build_tree(start = 0, last = self.array.size-1)
+  def build_tree(start = 0, last = self.array.size-1, depth = 0)
     return nil if start > last
-
+    
     mid = (start + last) / 2
-    root = Node.new(self.array[mid])
+    root = Node.new(self.array[mid], depth)
 
-    root.set_left(build_tree(start, mid-1))
-    root.set_right(build_tree(mid+1, last))
+    depth += 1
+    root.set_left(build_tree(start, mid-1, depth))
+    root.set_right(build_tree(mid+1, last, depth))
 
     self.root = root
   end
@@ -139,15 +140,18 @@ class Tree
     return q
   end
 
-  def height(val)
+  def depth(val)
     curr = self.root
     h = 0
 
     while curr.value != val
       curr.compare(curr.value, val) == 1 ? curr = curr.right_child : curr = curr.left_child
-      h += 1
     end
-    return h
+    return curr.depth
+  end
+
+  def height(val)
+    # 
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -206,4 +210,4 @@ tree.pretty_print
 # tree.level_order {|node| puts node.value}
 
 # tree.inorder {|node| puts node.value}
-puts "Tree height: #{tree.height(6345)}"
+puts "Tree depth: #{tree.depth(6345)}"

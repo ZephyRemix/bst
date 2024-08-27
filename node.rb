@@ -2,10 +2,11 @@ require_relative 'comparable'
 
 class Node
   include Comparable
-  attr_accessor :value, :left_child, :right_child
+  attr_accessor :value, :left_child, :right_child, :depth
 
-  def initialize(value = nil)
+  def initialize(value = nil, depth = nil)
     self.value = value
+    self.depth = depth
     self.left_child = nil
     self.right_child = nil
   end
