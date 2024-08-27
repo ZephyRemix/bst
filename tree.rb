@@ -9,7 +9,7 @@ class Tree
     self.root = nil
   end
 
-  def build_tree(start = 0, last = self.array.size-1, depth = 0)
+  def build_tree(start = 0, last = self.array.size-1, depth = 1)
     return nil if start > last
     
     mid = (start + last) / 2
@@ -140,24 +140,34 @@ class Tree
     return q
   end
 
-  def depth(val)
+  def depth(node)
     curr = self.root
 
-    while curr.value != val
-      curr.compare(curr.value, val) == 1 ? curr = curr.right_child : curr = curr.left_child
+    while curr.value != node.value
+      curr.compare(curr.value, node.value) == 1 ? curr = curr.right_child : curr = curr.left_child
     end
     return curr.depth
   end
 
-  def height(val)
+  def height(node)
 
-    curr_node = self.find(val)
-    h = 0
+    curr_node = self.find(node.value)
+    h = 1
 
     return h if curr_node.left_child == nil && curr_node.right_child == nil
 
     leaf_node = self.level_order(curr_node)[-1]
-    h = leaf_node.depth - curr_node.depth
+    h = leaf_node.depth - curr_node.depth + 1
+  end
+
+  def balanced?
+    self.preorder do |node|
+      node.left_child != nil ? l_h = self.height(node.left_child) : l_h = 0
+      node.right_child != nil ? r_h = self.height(node.right_child) : r_h = 0
+      return false if l_h - r_h > 1
+    end
+
+    return true
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -216,5 +226,6 @@ tree.pretty_print
 # tree.level_order {|node| puts node.value}
 
 # tree.inorder {|node| puts node.value}
-puts "Tree depth: #{tree.depth(4)}"
-puts "Tree height: #{tree.height(4)}"
+# puts "Tree depth: #{tree.depth(9)}"
+# puts "Tree height: #{tree.height(9)}"
+puts tree.balanced?
