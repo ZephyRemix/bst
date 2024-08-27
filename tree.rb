@@ -99,8 +99,8 @@ class Tree
     end
   end
 
-  def level_order
-    q = self.bfs
+  def level_order(root = self.root)
+    q = self.bfs(root)
 
     return q if !block_given?
  
@@ -142,7 +142,6 @@ class Tree
 
   def depth(val)
     curr = self.root
-    h = 0
 
     while curr.value != val
       curr.compare(curr.value, val) == 1 ? curr = curr.right_child : curr = curr.left_child
@@ -151,7 +150,14 @@ class Tree
   end
 
   def height(val)
-    # 
+
+    curr_node = self.find(val)
+    h = 0
+
+    return h if curr_node.left_child == nil && curr_node.right_child == nil
+
+    leaf_node = self.level_order(curr_node)[-1]
+    h = leaf_node.depth - curr_node.depth
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -175,10 +181,10 @@ class Tree
     return curr_node, prev_node
   end
 
-  def bfs
+  def bfs (root = self.root)
 
     q = Array.new()
-    q << self.root
+    q << root
     i = 0
 
     while !q[i].nil?
@@ -210,4 +216,5 @@ tree.pretty_print
 # tree.level_order {|node| puts node.value}
 
 # tree.inorder {|node| puts node.value}
-puts "Tree depth: #{tree.depth(6345)}"
+puts "Tree depth: #{tree.depth(4)}"
+puts "Tree height: #{tree.height(4)}"
